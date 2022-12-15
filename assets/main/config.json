@@ -1,1 +1,24 @@
-{"paths":{},"types":[],"uuids":["2dL3kvpAxJu6GJ7RdqJG5J","ecpdLyjvZBwrvm+cedCcQy"],"scenes":{"db://assets/Scene/gameScene.fire":0},"redirect":[1,0],"deps":["internal"],"packs":{},"name":"main","importBase":"import","nativeBase":"native","debug":false,"isZip":false,"encrypted":false}
+{
+    "paths": {},
+    "uuids": [
+        "2dL3kvpAxJu6GJ7RdqJG5J",
+        "ecpdLyjvZBwrvm+cedCcQy"
+    ],
+    "scenes": {
+        "db://assets/Scene/gameScene.fire": "2dL3kvpAxJu6GJ7RdqJG5J"
+    },
+    "redirect": [
+        "ecpdLyjvZBwrvm+cedCcQy",
+        0
+    ],
+    "deps": [
+        "internal"
+    ],
+    "packs": {},
+    "name": "main",
+    "importBase": "import",
+    "nativeBase": "native",
+    "debug": true,
+    "isZip": false,
+    "encrypted": false
+}
