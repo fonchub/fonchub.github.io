@@ -1329,6 +1329,7 @@ window.__require = function e(t, n, r) {
         this.hideTopNode();
         this.scoreboard.active = false;
         this.resetProgress();
+        this.GetGameObject("addSpeed").active = false;
         this.GetGameObject("startBtn").active = true;
         this.GetGameObject("lessBtn").active = true;
       };
@@ -1336,6 +1337,7 @@ window.__require = function e(t, n, r) {
         this.showTopNode();
         this.scoreboard.active = true;
         cc.find("Canvas").getComponent("GameModel").isEndless ? this.scoreboard.x = 0 : this.scoreboard.x = this.scorePos.x;
+        this.GetGameObject("addSpeed").active = true;
         this.GetGameObject("startBtn").active = false;
         this.GetGameObject("lessBtn").active = false;
       };
@@ -4644,6 +4646,9 @@ window.__require = function e(t, n, r) {
             return [ 2 ];
           });
         });
+      };
+      gameScene.prototype.addSpeed = function() {
+        this._speed = this.speedMax;
       };
       gameScene.prototype.getScroeCoefficient = function() {
         var lv = this.node.getComponent("GameModel")._level;

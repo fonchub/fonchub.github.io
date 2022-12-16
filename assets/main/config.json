@@ -1,17 +1,27 @@
 {
     "paths": {},
     "uuids": [
+        "29FYIk+N1GYaeWH/q1NxQO",
         "2dL3kvpAxJu6GJ7RdqJG5J",
-        "ecpdLyjvZBwrvm+cedCcQy"
+        "e97GVMl6JHh5Ml5qEDdSGa",
+        "ecpdLyjvZBwrvm+cedCcQy",
+        "f0BIwQ8D5Ml7nTNQbh1YlS"
     ],
     "scenes": {
         "db://assets/Scene/gameScene.fire": "2dL3kvpAxJu6GJ7RdqJG5J"
     },
     "redirect": [
+        "29FYIk+N1GYaeWH/q1NxQO",
+        0,
+        "e97GVMl6JHh5Ml5qEDdSGa",
+        0,
         "ecpdLyjvZBwrvm+cedCcQy",
+        1,
+        "f0BIwQ8D5Ml7nTNQbh1YlS",
         0
     ],
     "deps": [
+        "resources",
         "internal"
     ],
     "packs": {},
