@@ -1,1 +1,51 @@
-[1,["88Pk5GW7hPJ689bmOmJTl+"],["_textureSetter"],["cc.SpriteFrame"],0,[{"name":"turret-sun-attack effect","rect":[0,0,121,132],"offset":[0,0],"originalSize":[121,132],"capInsets":[0,0,0,0]}],[0],0,[0],[0],[0]]
+[
+  1,
+  [
+    "88Pk5GW7hPJ689bmOmJTl+"
+  ],
+  [
+    "_textureSetter"
+  ],
+  [
+    "cc.SpriteFrame"
+  ],
+  0,
+  [
+    {
+      "name": "turret-sun-attack effect",
+      "rect": [
+        0,
+        0,
+        121,
+        132
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "originalSize": [
+        121,
+        132
+      ],
+      "capInsets": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  [
+    0
+  ],
+  0,
+  [
+    0
+  ],
+  [
+    0
+  ],
+  [
+    0
+  ]
+]

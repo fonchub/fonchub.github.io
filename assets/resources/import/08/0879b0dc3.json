@@ -1,1 +1,391 @@
-[1,["6b//4EHRxKd7IiKo1q6HYF","40Vj8OkAhE2q3B+wf4X0TC","b0+Ru0fidK45ksnT2DythY","52Msp0kX9LnZy6xMIxgUgx","dfUzb5jAFB8I1aih5d9HTR","e4Jk8iypJFcpOMh1R8vSN9"],["_textureSetter"],["cc.SpriteFrame",["cc.AnimationClip",["_name","_duration","curveData"],0]],[[1,0,1,2,4]],[[[{"name":"mushroom","rect":[0,0,75,97],"offset":[0,0],"originalSize":[75,97],"capInsets":[0,0,0,0]}],[0],0,[0],[0],[0]],[[{"name":"monsterstart","rect":[0,0,90,97],"offset":[0,0],"originalSize":[90,97],"capInsets":[0,0,0,0]}],[0],0,[0],[0],[1]],[[{"name":"mushroomhealth","rect":[0,0,83,37],"offset":[0,0],"originalSize":[83,37],"capInsets":[0,0,0,0]}],[0],0,[0],[0],[2]],[[{"name":"ground","rect":[0,0,77,77],"offset":[0,0],"originalSize":[77,77],"capInsets":[0,0,0,0]}],[0],0,[0],[0],[3]],[[[0,"addxue",0.45,{"paths":{"ic_xin1":{"props":{"position":[{"frame":0,"value":[-19.294,-13.972,0]},{"frame":0.3333333333333333,"value":[-19.294,85.827,0]}],"opacity":[{"frame":0,"value":255},{"frame":0.3333333333333333,"value":0}]}},"ic_xin2":{"props":{"position":[{"frame":0.08333333333333333,"value":[0,0,0]},{"frame":0.4166666666666667,"value":[0,116.431,0]}],"opacity":[{"frame":0.08333333333333333,"value":255},{"frame":0.4166666666666667,"value":0}]}},"ic_xin3":{"props":{"position":[{"frame":0.11666666666666667,"value":[31.27,-17.298,0]},{"frame":0.45,"value":[31.27,105.121,0]}],"opacity":[{"frame":0.11666666666666667,"value":255},{"frame":0.45,"value":0}]}}}}]],0,0,[],[],[]],[[{"name":"baohuzhao","rect":[19,25,161,161],"offset":[-0.5,-5.5],"originalSize":[200,200],"capInsets":[0,0,0,0]}],[0],0,[0],[0],[4]],[[{"name":"xin","rect":[45,61,211,178],"offset":[0.5,0],"originalSize":[300,300],"capInsets":[0,0,0,0]}],[0],0,[0],[0],[5]]]]
+[
+  1,
+  [
+    "6b//4EHRxKd7IiKo1q6HYF",
+    "40Vj8OkAhE2q3B+wf4X0TC",
+    "b0+Ru0fidK45ksnT2DythY",
+    "52Msp0kX9LnZy6xMIxgUgx",
+    "dfUzb5jAFB8I1aih5d9HTR",
+    "e4Jk8iypJFcpOMh1R8vSN9"
+  ],
+  [
+    "_textureSetter"
+  ],
+  [
+    "cc.SpriteFrame",
+    [
+      "cc.AnimationClip",
+      [
+        "_name",
+        "_duration",
+        "curveData"
+      ],
+      0
+    ]
+  ],
+  [
+    [
+      1,
+      0,
+      1,
+      2,
+      4
+    ]
+  ],
+  [
+    [
+      [
+        {
+          "name": "mushroom",
+          "rect": [
+            0,
+            0,
+            75,
+            97
+          ],
+          "offset": [
+            0,
+            0
+          ],
+          "originalSize": [
+            75,
+            97
+          ],
+          "capInsets": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      [
+        0
+      ],
+      0,
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0
+      ]
+    ],
+    [
+      [
+        {
+          "name": "monsterstart",
+          "rect": [
+            0,
+            0,
+            90,
+            97
+          ],
+          "offset": [
+            0,
+            0
+          ],
+          "originalSize": [
+            90,
+            97
+          ],
+          "capInsets": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      [
+        0
+      ],
+      0,
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        1
+      ]
+    ],
+    [
+      [
+        {
+          "name": "mushroomhealth",
+          "rect": [
+            0,
+            0,
+            83,
+            37
+          ],
+          "offset": [
+            0,
+            0
+          ],
+          "originalSize": [
+            83,
+            37
+          ],
+          "capInsets": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      [
+        0
+      ],
+      0,
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        2
+      ]
+    ],
+    [
+      [
+        {
+          "name": "ground",
+          "rect": [
+            0,
+            0,
+            77,
+            77
+          ],
+          "offset": [
+            0,
+            0
+          ],
+          "originalSize": [
+            77,
+            77
+          ],
+          "capInsets": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      [
+        0
+      ],
+      0,
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        3
+      ]
+    ],
+    [
+      [
+        [
+          0,
+          "addxue",
+          0.45,
+          {
+            "paths": {
+              "ic_xin1": {
+                "props": {
+                  "position": [
+                    {
+                      "frame": 0,
+                      "value": [
+                        -19.294,
+                        -13.972,
+                        0
+                      ]
+                    },
+                    {
+                      "frame": 0.3333333333333333,
+                      "value": [
+                        -19.294,
+                        85.827,
+                        0
+                      ]
+                    }
+                  ],
+                  "opacity": [
+                    {
+                      "frame": 0,
+                      "value": 255
+                    },
+                    {
+                      "frame": 0.3333333333333333,
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              "ic_xin2": {
+                "props": {
+                  "position": [
+                    {
+                      "frame": 0.08333333333333333,
+                      "value": [
+                        0,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "frame": 0.4166666666666667,
+                      "value": [
+                        0,
+                        116.431,
+                        0
+                      ]
+                    }
+                  ],
+                  "opacity": [
+                    {
+                      "frame": 0.08333333333333333,
+                      "value": 255
+                    },
+                    {
+                      "frame": 0.4166666666666667,
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              "ic_xin3": {
+                "props": {
+                  "position": [
+                    {
+                      "frame": 0.11666666666666667,
+                      "value": [
+                        31.27,
+                        -17.298,
+                        0
+                      ]
+                    },
+                    {
+                      "frame": 0.45,
+                      "value": [
+                        31.27,
+                        105.121,
+                        0
+                      ]
+                    }
+                  ],
+                  "opacity": [
+                    {
+                      "frame": 0.11666666666666667,
+                      "value": 255
+                    },
+                    {
+                      "frame": 0.45,
+                      "value": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      ],
+      0,
+      0,
+      [],
+      [],
+      []
+    ],
+    [
+      [
+        {
+          "name": "baohuzhao",
+          "rect": [
+            19,
+            25,
+            161,
+            161
+          ],
+          "offset": [
+            -0.5,
+            -5.5
+          ],
+          "originalSize": [
+            200,
+            200
+          ],
+          "capInsets": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      [
+        0
+      ],
+      0,
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        4
+      ]
+    ],
+    [
+      [
+        {
+          "name": "xin",
+          "rect": [
+            45,
+            61,
+            211,
+            178
+          ],
+          "offset": [
+            0.5,
+            0
+          ],
+          "originalSize": [
+            300,
+            300
+          ],
+          "capInsets": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      [
+        0
+      ],
+      0,
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        5
+      ]
+    ]
+  ]
+]
