@@ -3147,7 +3147,7 @@ window.__require = function e(t, n, r) {
         this.GetText("lab_homeblood").string = this.homeBlood + "";
       };
       gameScene.prototype.initCoin = function() {
-        this.level >= 1 && this.level <= 5 ? this.coin = 1e3 : this.level >= 6 && this.level <= 40 ? this.coin = 800 : this.level >= 41 && this.level <= 99 && (this.coin = 500);
+        this.level >= 1 && this.level <= 5 ? this.coin = 1e3 : this.level >= 6 && this.level <= 40 ? this.coin = 1e3 : this.level >= 41 && this.level <= 99 && (this.coin = 1e3);
         this.setCoinLabel();
       };
       gameScene.prototype.initGiveTurret = function() {
