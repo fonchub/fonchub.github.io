@@ -1447,6 +1447,7 @@ window.__require = function e(t, n, r) {
         return _this;
       }
       Pop_level.prototype.onLoad = function() {
+        for (var i = 0; i < this.node.children.length; i++) this.node.children[i].y -= 150;
         this.setNodeSprite();
         this.getPathNode();
         this.getLuXian();
@@ -2604,7 +2605,8 @@ window.__require = function e(t, n, r) {
           for (var p = 0; p < per_wave_num; p++) list.push({
             id: Utils_1.default.getRndInteger(1, 6),
             isBoss: false,
-            bisi: false
+            bisi: false,
+            newBoss: false
           });
           monster_list.push(list);
         }
@@ -2612,7 +2614,8 @@ window.__require = function e(t, n, r) {
         for (var p = 0; p < odd_num; p++) monster_list[insertIndex].push({
           id: Utils_1.default.getRndInteger(1, 6),
           isBoss: false,
-          bisi: false
+          bisi: false,
+          newBoss: false
         });
         var bossList = this.getRandomNum(0, monster_list.length - 1, this.bossCount);
         for (var b = 0; b < bossList.length; b++) {
@@ -2623,13 +2626,14 @@ window.__require = function e(t, n, r) {
           var count = 100 - data.clearanceRate;
           var rand = Utils_1.default.getRndInteger(1, 100);
           if (rand <= count) {
-            var num = 10;
+            var num = 30;
             for (var i = 0; i < monster_list.length; i++) for (var c = 0; c < monster_list[i].length; c++) if (num > 1) {
               monster_list[i][c].bisi = true;
               num--;
             }
           }
         }
+        if (this.level <= 10) monster_list[monster_list.length - 1][monster_list[monster_list.length - 1].length - 1].newBoss = true; else for (var i = 1; i <= monster_list.length - 1; i++) monster_list[i][monster_list[i].length - 1].newBoss = true;
         this.monster_data_list = monster_list;
         console.log("\u602a\u517d\u53c2\u6570===>", monster_list);
       };
@@ -2663,7 +2667,8 @@ window.__require = function e(t, n, r) {
               path: _this.levelScript.lujing,
               id: id,
               isBoss: isBoss,
-              bisi: list[i].bisi
+              bisi: list[i].bisi,
+              newBoss: list[i].newBoss
             };
             var rot = _this.levelScript.getOrientation(_this.mapIndex);
             e.getComponent(item_monster_1.default).init(data, rot);
@@ -2705,15 +2710,15 @@ window.__require = function e(t, n, r) {
         if (1 == id) {
           this.skill_frozen++;
           pos = this.GetGameObject("tools-ice").position;
-          this.GetGameObject("tools-ice").active = true;
+          this.frozen();
         } else if (2 == id) {
           this.skill_shield++;
           pos = this.GetGameObject("tools-shield").position;
-          this.GetGameObject("tools-shield").active = true;
+          this.shield();
         } else if (3 == id) {
           this.skill_addblood++;
           pos = this.GetGameObject("tools-medicine").position;
-          this.GetGameObject("tools-medicine").active = true;
+          this.addblood();
         }
         obj.node.getComponent(prop_1.default).move(pos);
       };
@@ -2741,6 +2746,7 @@ window.__require = function e(t, n, r) {
           this.enemylist.splice(i, 1);
           break;
         }
+        cc.director.emit("deleteGuai", blood);
         if (this.homeBlood - blood.reduce_blood <= 0) {
           this.homeBlood = 0;
           this.GetText("lab_homeblood").string = "0";
@@ -2782,6 +2788,7 @@ window.__require = function e(t, n, r) {
       };
       gameScene.prototype.uplevel = function(price) {
         this.coin -= price;
+        MsgHints_1.default.show("\u5347\u7ea7\u6210\u529f");
         this.setCoinLabel();
         window["platform"].getRes("upgrade", "audio").then(function(msg) {
           AudioMgr_1.default.Instance().playSFX(msg);
@@ -2815,7 +2822,7 @@ window.__require = function e(t, n, r) {
           this.GetGameObject("Pop_shop").getComponent(Pop_shop_1.default).show();
         } else {
           this.GetGameObject("Pop_shop").getComponent(Pop_shop_1.default).close();
-          1 == data.type && this.showNull(data.pos);
+          1 != data.type && 3 != data.type || this.showNull(data.pos);
         }
         console.log("\u8fd4\u56de\u53c2\u6570==>", data);
       };
@@ -2824,7 +2831,8 @@ window.__require = function e(t, n, r) {
           console.log("\u5c4f\u5e55\u5de6\u53f3\u8fb9\u754c");
           return {
             active: false,
-            type: 3
+            type: 3,
+            pos: pos
           };
         }
         for (var a = 0; a < this.turretList.length; a++) {
@@ -3356,12 +3364,17 @@ window.__require = function e(t, n, r) {
         this.setRank(data.id);
         this.setPower();
         this.GetGameObject("bing").active = false;
+        console.log("\u5fc5\u6b7b====>", data);
+        if (data.newBoss) {
+          this.hp = 5 * this.hp;
+          this.maxhp = 5 * this.maxhp;
+          this.GetGameObject("img").scale = 1.5;
+        } else this.isBoss ? this.GetGameObject("img").scale = 1.2 : this.GetGameObject("img").scale = 1;
         if (data.bisi) {
           this.hp = 1e9;
           this.maxhp = 1e9;
         }
         this.GetGameObject("monsterhealth").getComponent(cc.Sprite).fillRange = Number(this.hp / this.maxhp);
-        this.isBoss ? this.GetGameObject("img").scale = 1.2 : this.GetGameObject("img").scale = 1;
         1 == data.id || 2 == data.id ? this.onGuaiAnim_type1() : this.onGuaiAnim_type2();
         this.node.scaleX = "left" == this.rotList[this.pathindex - 1] ? -1 : 1;
       };
@@ -3369,33 +3382,33 @@ window.__require = function e(t, n, r) {
         if (1 === type || 2 === type) if (this.isBoss) {
           this.hp = 40;
           this.maxhp = 40;
-          this.sped = 110;
-          this.maxsped = 110;
+          this.sped = 165;
+          this.maxsped = 165;
         } else {
           this.hp = 5;
           this.maxhp = 5;
-          this.sped = 160;
-          this.maxsped = 160;
+          this.sped = 240;
+          this.maxsped = 240;
         } else if (3 === type || 4 === type) if (this.isBoss) {
           this.hp = 50;
           this.maxhp = 50;
-          this.sped = 180;
-          this.maxsped = 180;
+          this.sped = 270;
+          this.maxsped = 270;
         } else {
           this.hp = 5;
           this.maxhp = 5;
-          this.sped = 200;
-          this.maxsped = 200;
+          this.sped = 300;
+          this.maxsped = 300;
         } else if (5 === type || 6 === type) if (this.isBoss) {
           this.hp = 30;
           this.maxhp = 30;
-          this.sped = 240;
-          this.maxsped = 240;
+          this.sped = 360;
+          this.maxsped = 360;
         } else {
           this.hp = 3;
           this.maxhp = 3;
-          this.sped = 280;
-          this.maxsped = 280;
+          this.sped = 420;
+          this.maxsped = 420;
         }
       };
       item_monster.prototype.setPower = function() {
@@ -3623,6 +3636,9 @@ window.__require = function e(t, n, r) {
         this.level_node_size();
         this.set_level_power();
       };
+      item_turret.prototype.up_cd = function() {
+        this.cd = this.cd / 2;
+      };
       item_turret.prototype.level_node_size = function() {
         switch (this.level) {
          case 1:
@@ -3722,22 +3738,29 @@ window.__require = function e(t, n, r) {
         if (enemylist.length > 0) {
           if (this.guaiwuNode) {
             var dis = this.guaiwuNode.position.sub(this.node.position).mag();
-            if (dis < mindis) return {
-              node: this.guaiwuNode,
-              list: list
-            };
+            if (dis < mindis) {
+              for (var i = 0; i < enemylist.length; ++i) {
+                if (enemylist[i].x < -cc.winSize.width / 2) continue;
+                var dis_1 = enemylist[i].position.sub(this.node.position).mag();
+                if (dis_1 < mindis) {
+                  target = enemylist[i];
+                  mindis = dis_1;
+                  list.push(enemylist[i]);
+                }
+              }
+              return {
+                node: this.guaiwuNode,
+                list: list
+              };
+            }
             for (var i = 0; i < enemylist.length; ++i) {
               if (enemylist[i].x < -cc.winSize.width / 2) continue;
-              var dis_1 = enemylist[i].position.sub(this.node.position).mag();
-              if (dis_1 < mindis) {
+              var dis_2 = enemylist[i].position.sub(this.node.position).mag();
+              if (dis_2 < mindis) {
                 target = enemylist[i];
-                mindis = dis_1;
+                mindis = dis_2;
                 this.guaiwuNode = enemylist[i];
                 list.push(enemylist[i]);
-                if (i == enemylist.length - 1 && !this.guaiwuNode) {
-                  target = enemylist[enemylist.length - 1];
-                  this.guaiwuNode = enemylist[enemylist.length - 1];
-                }
               }
             }
             return {
@@ -3753,10 +3776,6 @@ window.__require = function e(t, n, r) {
               mindis = dis;
               this.guaiwuNode = enemylist[i];
               list.push(enemylist[i]);
-              if (i == enemylist.length - 1 && !this.guaiwuNode) {
-                target = enemylist[enemylist.length - 1];
-                this.guaiwuNode = enemylist[enemylist.length - 1];
-              }
             }
           }
           return {
@@ -3770,16 +3789,13 @@ window.__require = function e(t, n, r) {
         };
       };
       item_turret.prototype.update = function(dt) {
-        var _this = this;
         this.lastfire += dt;
         var target = this.getTarget();
         var angle = this.getAngle(target.node);
         angle && (this.GetGameObject("icon").angle = angle);
         if (this.lastfire >= this.cd / 1) {
           this.lastfire = 0;
-          target.node && this.node.runAction(cc.sequence(cc.delayTime(.5), cc.callFunc(function() {
-            if (4 == _this.id) for (var i = 0; i < _this.level; i++) _this.init_bullet(target.list[i]); else _this.init_bullet(target.node);
-          })));
+          if (target.node) if (4 == this.id) for (var i = 0; i < this.level; i++) this.init_bullet(target.list[i]); else this.init_bullet(target.node);
         }
       };
       item_turret.prototype.getAngle = function(event) {
@@ -3864,6 +3880,7 @@ window.__require = function e(t, n, r) {
         this.level++;
         this.level_node_size();
         this.set_level_power();
+        this.up_cd();
         this.GetGameObject("upgrade").active = false;
         cc.director.emit("uplevel", this.price_turret());
       };
@@ -4063,43 +4080,43 @@ window.__require = function e(t, n, r) {
           _this.isMove = true;
           _this.GetSprite("img").spriteFrame = res;
           var action = null;
-          action = x >= cc.winSize.width / 2 - 150 ? cc.tween().by(.5, {
+          action = x >= cc.winSize.width / 2 - 150 ? cc.tween().by(.8, {
             x: -150
           }, {
             easing: "sineOut"
-          }).by(.2, {
+          }).by(.4, {
             x: 60
           }, {
             easing: "sineOut"
-          }).repeatForever(cc.tween().by(.4, {
+          }).repeatForever(cc.tween().by(1.5, {
             x: -120
           }, {
             easing: "sineOut"
-          }).by(.4, {
+          }).by(1.5, {
             x: 120
           }, {
             easing: "sineOut"
-          })) : x <= -cc.winSize.width / 2 - 150 ? cc.tween().by(.5, {
+          })) : x <= -cc.winSize.width / 2 - 150 ? cc.tween().by(.8, {
             x: 150
           }, {
             easing: "sineOut"
-          }).by(.2, {
+          }).by(.4, {
             x: -60
           }, {
             easing: "sineOut"
-          }).repeatForever(cc.tween().by(.4, {
+          }).repeatForever(cc.tween().by(1.5, {
             x: 120
           }, {
             easing: "sineOut"
-          }).by(.4, {
+          }).by(1.5, {
             x: -120
           }, {
             easing: "sineOut"
-          })) : cc.tween().repeatForever(cc.tween().by(.4, {
+          })) : cc.tween().repeatForever(cc.tween().by(1.5, {
             x: 120
           }, {
             easing: "sineOut"
-          }).by(.4, {
+          }).by(1.5, {
             x: -120
           }, {
             easing: "sineOut"
@@ -4127,7 +4144,7 @@ window.__require = function e(t, n, r) {
           this.isMove = false;
           return;
         }
-        this.node.y -= 2;
+        this.node.y -= 1;
       };
       prop.prototype.click = function() {
         cc.director.emit("getProp", {
