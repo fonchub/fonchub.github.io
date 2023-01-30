@@ -2515,7 +2515,7 @@ window.__require = function e(t, n, r) {
         _this.skill_addblood = 0;
         _this.isFrozen = false;
         _this.isShield = false;
-        _this.dropPropOdds = 100;
+        _this.dropPropOdds = 30;
         _this.levelCoinfig = null;
         _this.mapId = 0;
         _this.clearanceRate = 0;
@@ -2626,6 +2626,7 @@ window.__require = function e(t, n, r) {
           var count = 100 - data.clearanceRate;
           var rand = Utils_1.default.getRndInteger(1, 100);
           if (rand <= count) {
+            console.log("\u5fc5\u6b7b\u6e38\u620f");
             var num = 30;
             for (var i = 0; i < monster_list.length; i++) for (var c = 0; c < monster_list[i].length; c++) if (num > 1) {
               monster_list[i][c].bisi = true;
@@ -2634,6 +2635,21 @@ window.__require = function e(t, n, r) {
           }
         }
         if (this.level <= 10) monster_list[monster_list.length - 1][monster_list[monster_list.length - 1].length - 1].newBoss = true; else for (var i = 1; i <= monster_list.length - 1; i++) monster_list[i][monster_list[i].length - 1].newBoss = true;
+        var randomType = Utils_1.default.getRndInteger(0, 100);
+        var randomList = this.getRandomNum(0, monster_list.length - 1, 2);
+        if (randomType >= 80) if (Utils_1.default.getRndInteger(0, 100) >= 50) {
+          var type = Utils_1.default.getRndInteger(0, 100) >= 50 ? 5 : 6;
+          for (var i = 0; i < monster_list[randomList[0]].length; i++) monster_list[randomList[0]][i].id = type;
+        } else for (var i = 0; i < monster_list[randomList[0]].length; i++) monster_list[randomList[0]][i].newBoss = true;
+        if (randomType >= 60) {
+          var id = Utils_1.default.getRndInteger(1, 4);
+          var bossC = Utils_1.default.getRndInteger(1, 3);
+          console.log("index=====>", randomList[1], "\u5927\u602a\u7269\u6570\u91cf===>", bossC, "\u602a\u7269\u7c7b\u578b=====>", id);
+          for (var i = 0; i < monster_list[randomList[1]].length; i++) {
+            monster_list[randomList[1]][i].id = id;
+            i >= monster_list[randomList[1]].length - bossC && (monster_list[randomList[1]][i].newBoss = true);
+          }
+        }
         this.monster_data_list = monster_list;
         console.log("\u602a\u517d\u53c2\u6570===>", monster_list);
       };
@@ -2752,6 +2768,7 @@ window.__require = function e(t, n, r) {
           this.GetText("lab_homeblood").string = "0";
           console.log("\u8840\u91cf\u4e0d\u8db3\uff0c\u6e38\u620f\u5931\u8d25");
           this.node.stopAllActions();
+          this.stopGame();
           this.showFail();
           return;
         }
@@ -2768,12 +2785,17 @@ window.__require = function e(t, n, r) {
               _this.GetText("lab_num").string = _this.current_wave + ":" + _this.max_wave;
               _this.createwave();
             } else {
-              MsgHints_1.default.show("\u901a\u5173\u6210\u529f");
+              console.log("\u901a\u5173\u6210\u529f");
+              _this.stopGame();
               _this.showSuccess();
             }
           };
           this.scheduleOnce(callfunc, 1);
         }
+      };
+      gameScene.prototype.stopGame = function() {
+        for (var i = 0; i < this.enemylist.length; i++) this.enemylist[i].getComponent(item_monster_1.default).ismove = false;
+        for (var i = 0; i < this.turretList.length; i++) this.turretList[i].getComponent(item_turret_1.default).isAttack = false;
       };
       gameScene.prototype.homeAnim = function() {
         var node = this.GetGameObject("over");
@@ -2827,92 +2849,65 @@ window.__require = function e(t, n, r) {
         console.log("\u8fd4\u56de\u53c2\u6570==>", data);
       };
       gameScene.prototype.select_pos_in_path = function(pos) {
-        if (pos.x > cc.winSize.width / 2 - this.mapWidth || pos.x < -cc.winSize.width / 2 + this.mapWidth) {
-          console.log("\u5c4f\u5e55\u5de6\u53f3\u8fb9\u754c");
-          return {
-            active: false,
-            type: 3,
-            pos: pos
-          };
-        }
+        if (pos.x > cc.winSize.width / 2 - this.mapWidth || pos.x < -cc.winSize.width / 2 + this.mapWidth) return {
+          active: false,
+          type: 3,
+          pos: pos
+        };
         for (var a = 0; a < this.turretList.length; a++) {
           var node = this.turretList[a];
           var xradius = this.mapWidth / 2;
           var yradius = this.mapHeight / 2;
-          if (pos.x <= node.x + xradius && pos.x >= node.x - xradius && pos.y <= node.y + yradius && pos.y >= node.y - yradius) {
-            console.log("\u8be5\u4f4d\u7f6e\u5df2\u6709\u70ae\u5854");
-            return {
-              active: false,
-              type: 4
-            };
-          }
+          if (pos.x <= node.x + xradius && pos.x >= node.x - xradius && pos.y <= node.y + yradius && pos.y >= node.y - yradius) return {
+            active: false,
+            type: 4
+          };
         }
         for (var i = 0; i < this.levelScript.pathNode.length; i++) {
           var node = this.levelScript.pathNode[i];
           var xradius = this.mapWidth / 2;
           var yradius = this.mapHeight / 2;
-          if (pos.x <= node.x + xradius && pos.x >= node.x - xradius && pos.y <= node.y + yradius && pos.y >= node.y - yradius) {
-            console.log("\u5728\u8def\u5f84\u4e0a");
-            return {
-              active: false,
-              type: 2
-            };
-          }
+          if (pos.x <= node.x + xradius && pos.x >= node.x - xradius && pos.y <= node.y + yradius && pos.y >= node.y - yradius) return {
+            active: false,
+            type: 2
+          };
         }
         for (var i = 0; i < this.obstaclelist.length; i++) {
           var node = this.obstaclelist[i];
           var xradius = this.mapWidth / 2;
           var yradius = this.mapHeight / 2;
-          if (pos.x <= node.x + xradius && pos.x >= node.x - xradius && pos.y <= node.y + yradius && pos.y >= node.y - yradius) {
-            console.log("\u6709\u969c\u788d\u7269");
-            return {
-              active: false,
-              type: 2
-            };
-          }
+          if (pos.x <= node.x + xradius && pos.x >= node.x - xradius && pos.y <= node.y + yradius && pos.y >= node.y - yradius) return {
+            active: false,
+            type: 2
+          };
         }
         for (var i = 0; i < this.levelScript.pathNode.length; i++) {
           var node = this.levelScript.pathNode[i];
           var xradius = this.mapWidth / 2;
           var yradius = this.mapHeight / 2;
           if (pos.x <= node.x + xradius && pos.x >= node.x - xradius) if (pos.y > node.y) {
-            if (pos.y <= node.y + this.mapHeight / 2 * 3 && pos.y >= node.y + this.mapHeight / 2 && i > 0) {
-              console.log("\u653e\u7f6e\u70ae\u5854\u533a\u57df\u5185--\u4e0a");
-              return {
-                active: true,
-                position: cc.v3(node.x, node.y + this.mapHeight)
-              };
-            }
-          } else if (pos.y < node.y && pos.y >= node.y - this.mapHeight / 2 * 3 && pos.y <= node.y - this.mapHeight / 2) {
-            console.log("\u653e\u7f6e\u70ae\u5854\u533a\u57df\u5185--\u4e0b");
-            return {
+            if (pos.y <= node.y + this.mapHeight / 2 * 3 && pos.y >= node.y + this.mapHeight / 2 && i > 0) return {
               active: true,
-              position: cc.v3(node.x, node.y - this.mapHeight)
+              position: cc.v3(node.x, node.y + this.mapHeight)
             };
-          }
+          } else if (pos.y < node.y && pos.y >= node.y - this.mapHeight / 2 * 3 && pos.y <= node.y - this.mapHeight / 2) return {
+            active: true,
+            position: cc.v3(node.x, node.y - this.mapHeight)
+          };
           if (pos.y <= node.y + yradius && pos.y >= node.y - yradius) if (pos.x > node.x) {
-            if (pos.x <= node.x + this.mapWidth / 2 * 3 && pos.x >= node.x + this.mapWidth / 2) {
-              console.log("\u653e\u7f6e\u70ae\u5854\u533a\u57df\u5185--\u53f3");
-              return {
-                active: true,
-                position: cc.v3(node.x + this.mapWidth, node.y)
-              };
-            }
-          } else if (pos.x < node.x && pos.x >= node.x - this.mapWidth / 2 * 3 && pos.x <= node.x - this.mapWidth / 2) {
-            console.log("\u653e\u7f6e\u70ae\u5854\u533a\u57df\u5185--\u5de6");
-            return {
+            if (pos.x <= node.x + this.mapWidth / 2 * 3 && pos.x >= node.x + this.mapWidth / 2) return {
               active: true,
-              position: cc.v3(node.x - this.mapWidth, node.y)
+              position: cc.v3(node.x + this.mapWidth, node.y)
             };
-          }
-          if (i == this.levelScript.pathNode.length - 1) {
-            console.log("\u7a7a\u5730\uff0c\u4e0d\u53ef\u653e\u7f6e\u70ae\u53f0");
-            return {
-              active: false,
-              type: 1,
-              pos: pos
-            };
-          }
+          } else if (pos.x < node.x && pos.x >= node.x - this.mapWidth / 2 * 3 && pos.x <= node.x - this.mapWidth / 2) return {
+            active: true,
+            position: cc.v3(node.x - this.mapWidth, node.y)
+          };
+          if (i == this.levelScript.pathNode.length - 1) return {
+            active: false,
+            type: 1,
+            pos: pos
+          };
         }
       };
       gameScene.prototype.showNull = function(pos) {
@@ -2942,7 +2937,7 @@ window.__require = function e(t, n, r) {
               _this.GetText("lab_num").string = _this.current_wave + ":" + _this.max_wave;
               _this.createwave();
             } else {
-              MsgHints_1.default.show("\u901a\u5173\u6210\u529f");
+              console.log("\u901a\u5173\u6210\u529f");
               _this.showSuccess();
             }
           };
@@ -2991,16 +2986,7 @@ window.__require = function e(t, n, r) {
       };
       gameScene.prototype.propOdds = function(pos) {
         var type = Utils_1.default.getRndInteger(1, 3);
-        if (1 == type) {
-          if (this.skill_frozen > 0) return;
-          this.skill_frozen++;
-        } else if (2 == type) {
-          if (this.skill_shield > 0) return;
-          this.skill_shield++;
-        } else if (3 == type) {
-          if (this.skill_addblood > 0) return;
-          this.skill_addblood++;
-        }
+        1 == type ? this.skill_frozen++ : 2 == type ? this.skill_shield++ : 3 == type && this.skill_addblood++;
         var n = Utils_1.default.getRndInteger(0, 100);
         if (n <= this.dropPropOdds) {
           var node = cc.instantiate(this.propPrefab);
@@ -3059,6 +3045,8 @@ window.__require = function e(t, n, r) {
             }
           }
         }
+        l = this.excludePos(l);
+        console.log("list====>", l);
         var obj = this.initGiveTurret();
         var forNum = Utils_1.default.getRndInteger(obj.min, obj.max);
         console.log("\u8d60\u9001\u70ae\u53f0\u4e2a\u6570:", forNum);
@@ -3071,6 +3059,11 @@ window.__require = function e(t, n, r) {
           node.position = l[pos];
           this.turretList.push(node);
         }
+      };
+      gameScene.prototype.excludePos = function(l) {
+        var list = l;
+        for (var a = 0; a < list.length; a++) for (var b = 0; b < list.length; b++) a != b && list[a].equals(list[b]) && list.splice(b, 1);
+        return list;
       };
       gameScene.prototype.random_turret_name = function(id) {
         switch (id) {
@@ -3093,6 +3086,7 @@ window.__require = function e(t, n, r) {
       gameScene.prototype.getRandomNum = function(min, max, maxCount) {
         var randoms = [];
         if (0 == maxCount) return [];
+        if (min + max < maxCount) return [];
         while (true) {
           var isExists = false;
           var random = Utils_1.default.getRndInteger(min, max);
@@ -3365,18 +3359,22 @@ window.__require = function e(t, n, r) {
         this.setPower();
         this.GetGameObject("bing").active = false;
         console.log("\u5fc5\u6b7b====>", data);
+        this.bossUI();
         if (data.newBoss) {
           this.hp = 5 * this.hp;
           this.maxhp = 5 * this.maxhp;
           this.GetGameObject("img").scale = 1.5;
         } else this.isBoss ? this.GetGameObject("img").scale = 1.2 : this.GetGameObject("img").scale = 1;
         if (data.bisi) {
-          this.hp = 1e9;
-          this.maxhp = 1e9;
+          this.hp = 100;
+          this.maxhp = 100;
         }
         this.GetGameObject("monsterhealth").getComponent(cc.Sprite).fillRange = Number(this.hp / this.maxhp);
         1 == data.id || 2 == data.id ? this.onGuaiAnim_type1() : this.onGuaiAnim_type2();
         this.node.scaleX = "left" == this.rotList[this.pathindex - 1] ? -1 : 1;
+      };
+      item_monster.prototype.bossUI = function() {
+        for (var i = 0; i < this.node.children.length; i++) this.node.children[i].y += 20;
       };
       item_monster.prototype.setHp = function(type) {
         if (1 === type || 2 === type) if (this.isBoss) {
@@ -3532,7 +3530,7 @@ window.__require = function e(t, n, r) {
         if (this.hp <= 0) return;
         this.hp -= info["power"];
         this.hp = Math.max(this.hp, 0);
-        3 == info.id && this.skill_jiansu();
+        3 != info.id && 5 != info.id || this.skill_jiansu();
         this.GetGameObject("monsterhealth").getComponent(cc.Sprite).fillRange = Number(this.hp / this.maxhp);
         if (this.hp <= 0) {
           cc.director.emit("guaiDie", {
@@ -3623,6 +3621,7 @@ window.__require = function e(t, n, r) {
         _this.power = 0;
         _this.cd = 1;
         _this.lastfire = 0;
+        _this.isAttack = false;
         _this.guaiwuNode = null;
         return _this;
       }
@@ -3630,6 +3629,7 @@ window.__require = function e(t, n, r) {
         this.id = id;
         this.enemylist = list;
         this.bullet_pre = pre;
+        this.isAttack = true;
         this.cd = 2 == id ? 1 : 2;
         Utils_1.default.setSpriteAssets(this.GetGameObject("icon").getComponent(cc.Sprite), src);
         Utils_1.default.setSpriteAssets(this.GetGameObject("upgrade").getComponent(cc.Sprite), "upgrade");
@@ -3658,19 +3658,35 @@ window.__require = function e(t, n, r) {
          case 1:
           switch (this.level) {
            case 1:
-            this.power = 3;
+            this.power = 2;
             break;
 
            case 2:
-            this.power = 5;
+            this.power = 3;
             break;
 
            case 3:
-            this.power = 7;
+            this.power = 4;
           }
           break;
 
          case 2:
+         case 3:
+          switch (this.level) {
+           case 1:
+            this.power = 1;
+            break;
+
+           case 2:
+            this.power = 2;
+            break;
+
+           case 3:
+            this.power = 3;
+          }
+          break;
+
+         case 4:
           switch (this.level) {
            case 1:
             this.power = 1;
@@ -3681,52 +3697,22 @@ window.__require = function e(t, n, r) {
             break;
 
            case 3:
-            this.power = 4;
-          }
-          break;
-
-         case 3:
-          switch (this.level) {
-           case 1:
-            this.power = 2;
-            break;
-
-           case 2:
-            this.power = 4;
-            break;
-
-           case 3:
             this.power = 5;
-          }
-          break;
-
-         case 4:
-          switch (this.level) {
-           case 1:
-            this.power = 3;
-            break;
-
-           case 2:
-            this.power = 5;
-            break;
-
-           case 3:
-            this.power = 7;
           }
           break;
 
          case 5:
           switch (this.level) {
            case 1:
-            this.power = 3;
+            this.power = 2;
             break;
 
            case 2:
-            this.power = 6;
+            this.power = 3;
             break;
 
            case 3:
-            this.power = 9;
+            this.power = 5;
           }
         }
       };
@@ -3789,6 +3775,7 @@ window.__require = function e(t, n, r) {
         };
       };
       item_turret.prototype.update = function(dt) {
+        if (!this.isAttack) return;
         this.lastfire += dt;
         var target = this.getTarget();
         var angle = this.getAngle(target.node);
@@ -4068,6 +4055,8 @@ window.__require = function e(t, n, r) {
         var _this = null !== _super && _super.apply(this, arguments) || this;
         _this.id = 0;
         _this.isMove = false;
+        _this.movePos = null;
+        _this.speed = 0;
         return _this;
       }
       prop.prototype.init = function(type, x) {
@@ -4079,55 +4068,29 @@ window.__require = function e(t, n, r) {
         var callfunc = function(res) {
           _this.isMove = true;
           _this.GetSprite("img").spriteFrame = res;
-          var action = null;
-          action = x >= cc.winSize.width / 2 - 150 ? cc.tween().by(.8, {
-            x: -150
-          }, {
-            easing: "sineOut"
-          }).by(.4, {
-            x: 60
-          }, {
-            easing: "sineOut"
-          }).repeatForever(cc.tween().by(1.5, {
-            x: -120
-          }, {
-            easing: "sineOut"
-          }).by(1.5, {
-            x: 120
-          }, {
-            easing: "sineOut"
-          })) : x <= -cc.winSize.width / 2 - 150 ? cc.tween().by(.8, {
-            x: 150
-          }, {
-            easing: "sineOut"
-          }).by(.4, {
-            x: -60
-          }, {
-            easing: "sineOut"
-          }).repeatForever(cc.tween().by(1.5, {
-            x: 120
-          }, {
-            easing: "sineOut"
-          }).by(1.5, {
-            x: -120
-          }, {
-            easing: "sineOut"
-          })) : cc.tween().repeatForever(cc.tween().by(1.5, {
-            x: 120
-          }, {
-            easing: "sineOut"
-          }).by(1.5, {
-            x: -120
-          }, {
-            easing: "sineOut"
-          }));
-          cc.tween(_this.node).then(action).start();
         };
         Utils_1.default.getSpriteFrame(name, callfunc);
       };
       prop.prototype.update = function(dt) {
         var _this = this;
         if (!this.isMove) return;
+        if (!this.movePos) {
+          var x = Utils_1.default.getRndInteger(-120, 120);
+          this.node.x + x >= cc.winSize.width / 2 ? x = Utils_1.default.getRndInteger(-80, -150) : this.node.x + x <= -cc.winSize.width / 2 && (x = Utils_1.default.getRndInteger(80, 150));
+          var y = Utils_1.default.getRndInteger(50, 120);
+          this.movePos = cc.v2(this.node.x + x, this.node.y - y);
+          this.speed = Utils_1.default.getRndInteger(80, 140);
+        }
+        if (this.movePos) {
+          var d = this.movePos.sub(this.node.getPosition());
+          if (d.mag() < this.speed * dt) {
+            this.movePos = null;
+            this.speed = 0;
+          } else {
+            var v = d.normalize().mul(this.speed / 3 * dt);
+            this.node.position = this.node.position.add(cc.v3(v.x, v.y, 0));
+          }
+        }
         if (this.node.y <= -cc.winSize.height / 2 + 50) {
           this.node.stopAllActions();
           cc.tween(this.node).delay(4).to(.25, {
@@ -4144,7 +4107,6 @@ window.__require = function e(t, n, r) {
           this.isMove = false;
           return;
         }
-        this.node.y -= 1;
       };
       prop.prototype.click = function() {
         cc.director.emit("getProp", {
