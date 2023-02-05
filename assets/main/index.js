@@ -2515,7 +2515,7 @@ window.__require = function e(t, n, r) {
         _this.skill_addblood = 0;
         _this.isFrozen = false;
         _this.isShield = false;
-        _this.dropPropOdds = 30;
+        _this.dropPropOdds = 5;
         _this.levelCoinfig = null;
         _this.mapId = 0;
         _this.clearanceRate = 0;
@@ -2687,7 +2687,7 @@ window.__require = function e(t, n, r) {
               newBoss: list[i].newBoss
             };
             var rot = _this.levelScript.getOrientation(_this.mapIndex);
-            e.getComponent(item_monster_1.default).init(data, rot);
+            e.getComponent(item_monster_1.default).init(data, rot, _this.level, _this.current_wave);
             _this.enemylist.push(e);
           })));
         };
@@ -2752,17 +2752,18 @@ window.__require = function e(t, n, r) {
       };
       gameScene.prototype.reduce_blood = function(blood) {
         var _this = this;
+        for (var i = 0; i < this.enemylist.length; i++) if (this.enemylist[i] == blood.node) {
+          this.enemylist.splice(i, 1);
+          break;
+        }
+        this.enemyCount--;
+        cc.director.emit("deleteGuai", blood);
         if (this.isShield) {
           this.isShield = false;
           this.GetGameObject("baohuzhao").active = false;
           console.log("\u62a4\u76fe\u62b5\u6d88\u653b\u51fb");
           return;
         }
-        for (var i = 0; i < this.enemylist.length; i++) if (this.enemylist[i] == blood.node) {
-          this.enemylist.splice(i, 1);
-          break;
-        }
-        cc.director.emit("deleteGuai", blood);
         if (this.homeBlood - blood.reduce_blood <= 0) {
           this.homeBlood = 0;
           this.GetText("lab_homeblood").string = "0";
@@ -2812,10 +2813,10 @@ window.__require = function e(t, n, r) {
         this.coin -= price;
         MsgHints_1.default.show("\u5347\u7ea7\u6210\u529f");
         this.setCoinLabel();
+        cc.director.emit("selectUp", this.coin);
         window["platform"].getRes("upgrade", "audio").then(function(msg) {
           AudioMgr_1.default.Instance().playSFX(msg);
         });
-        cc.director.emit("selectUp", this.coin);
       };
       gameScene.prototype.put_turret = function(res) {
         if (this.coin < res.price) return MsgHints_1.default.show("\u91d1\u5e01\u4e0d\u8db3");
@@ -2846,7 +2847,6 @@ window.__require = function e(t, n, r) {
           this.GetGameObject("Pop_shop").getComponent(Pop_shop_1.default).close();
           1 != data.type && 3 != data.type || this.showNull(data.pos);
         }
-        console.log("\u8fd4\u56de\u53c2\u6570==>", data);
       };
       gameScene.prototype.select_pos_in_path = function(pos) {
         if (pos.x > cc.winSize.width / 2 - this.mapWidth || pos.x < -cc.winSize.width / 2 + this.mapWidth) return {
@@ -2919,18 +2919,18 @@ window.__require = function e(t, n, r) {
       gameScene.prototype.guaiDie = function(res) {
         var _this = this;
         this.propOdds(res.node.position);
-        cc.director.emit("deleteGuai", res);
         for (var i = this.enemylist.length - 1; i >= 0; --i) if (res.node == this.enemylist[i]) {
           this.enemylist.splice(i, 1);
           break;
         }
+        cc.director.emit("deleteGuai", res);
         this.coin_prefab_anim(res.node.position);
         this.enemyCount--;
-        this.coin += res.money;
+        this.coin += Number(res.money);
         this.rank += res.score;
         this.setCoinLabel();
         this.setScoreLabel();
-        if (this.enemyCount < 1) {
+        if (this.enemylist.length < 1) {
           var callfunc = function() {
             if (_this.current_wave < _this.max_wave) {
               _this.current_wave++;
@@ -3141,7 +3141,7 @@ window.__require = function e(t, n, r) {
         this.GetText("lab_homeblood").string = this.homeBlood + "";
       };
       gameScene.prototype.initCoin = function() {
-        this.level >= 1 && this.level <= 5 ? this.coin = 1e3 : this.level >= 6 && this.level <= 40 ? this.coin = 1e3 : this.level >= 41 && this.level <= 99 && (this.coin = 1e3);
+        this.level >= 1 && this.level <= 5 ? this.coin = 2e3 : this.level >= 6 && this.level <= 40 ? this.coin = 4e3 : this.level >= 41 && this.level <= 99 && (this.coin = 5e3);
         this.setCoinLabel();
       };
       gameScene.prototype.initGiveTurret = function() {
@@ -3346,28 +3346,29 @@ window.__require = function e(t, n, r) {
         _this.rotList = [];
         return _this;
       }
-      item_monster.prototype.init = function(data, rot) {
+      item_monster.prototype.init = function(data, rot, level, current_wave) {
         this.rotList = rot;
         this.path = data.path;
         this.node.position = this.path[0];
         this.id = data.id;
         this.isBoss = data.isBoss;
         this.setImg(data.id);
-        this.setHp(data.id);
+        this.setHp(data.id, level, current_wave);
         this.setMoney(data.id);
         this.setRank(data.id);
         this.setPower();
         this.GetGameObject("bing").active = false;
-        console.log("\u5fc5\u6b7b====>", data);
+        this.GetGameObject("fengshan").active = false;
         this.bossUI();
         if (data.newBoss) {
-          this.hp = 5 * this.hp;
-          this.maxhp = 5 * this.maxhp;
+          this.hp += 10 * current_wave;
+          this.maxhp += 10 * current_wave;
           this.GetGameObject("img").scale = 1.5;
         } else this.isBoss ? this.GetGameObject("img").scale = 1.2 : this.GetGameObject("img").scale = 1;
         if (data.bisi) {
-          this.hp = 100;
-          this.maxhp = 100;
+          this.hp += Number(level);
+          this.maxhp += Number(level);
+          console.log("\u5fc5\u6b7b====>", this.hp);
         }
         this.GetGameObject("monsterhealth").getComponent(cc.Sprite).fillRange = Number(this.hp / this.maxhp);
         1 == data.id || 2 == data.id ? this.onGuaiAnim_type1() : this.onGuaiAnim_type2();
@@ -3376,15 +3377,15 @@ window.__require = function e(t, n, r) {
       item_monster.prototype.bossUI = function() {
         for (var i = 0; i < this.node.children.length; i++) this.node.children[i].y += 20;
       };
-      item_monster.prototype.setHp = function(type) {
+      item_monster.prototype.setHp = function(type, level, current_wave) {
         if (1 === type || 2 === type) if (this.isBoss) {
           this.hp = 40;
           this.maxhp = 40;
           this.sped = 165;
           this.maxsped = 165;
         } else {
-          this.hp = 5;
-          this.maxhp = 5;
+          this.hp = 15;
+          this.maxhp = 15;
           this.sped = 240;
           this.maxsped = 240;
         } else if (3 === type || 4 === type) if (this.isBoss) {
@@ -3393,8 +3394,8 @@ window.__require = function e(t, n, r) {
           this.sped = 270;
           this.maxsped = 270;
         } else {
-          this.hp = 5;
-          this.maxhp = 5;
+          this.hp = 10;
+          this.maxhp = 10;
           this.sped = 300;
           this.maxsped = 300;
         } else if (5 === type || 6 === type) if (this.isBoss) {
@@ -3403,11 +3404,16 @@ window.__require = function e(t, n, r) {
           this.sped = 360;
           this.maxsped = 360;
         } else {
-          this.hp = 3;
-          this.maxhp = 3;
+          this.hp = 6;
+          this.maxhp = 6;
           this.sped = 420;
           this.maxsped = 420;
         }
+        this.hp += 30;
+        this.maxhp += 30;
+        this.hp += Number(level) / 1.5 + 20 * current_wave;
+        this.maxhp += Number(level) / 1.5 + 20 * current_wave;
+        console.log("hp===>", this.hp);
       };
       item_monster.prototype.setPower = function() {
         this.isBoss ? this.power = 2 : this.power = 1;
@@ -3501,6 +3507,7 @@ window.__require = function e(t, n, r) {
         Utils_1.default.setSpriteAssets(this.GetSprite("monsterhealth_bg"), "monster/monsterhealth_bg");
         Utils_1.default.setSpriteAssets(this.GetSprite("monsterhealth"), "monster/monsterhealth");
         Utils_1.default.setSpriteAssets(this.GetSprite("bing"), "turret/turret-ice-attackeffect");
+        Utils_1.default.setSpriteAssets(this.GetSprite("fengshan"), "turret/turret-leaf-bullet");
         switch (type) {
          case 1:
           Utils_1.default.setSpriteAssets(this.GetSprite("img"), "monster/monster1");
@@ -3530,7 +3537,7 @@ window.__require = function e(t, n, r) {
         if (this.hp <= 0) return;
         this.hp -= info["power"];
         this.hp = Math.max(this.hp, 0);
-        3 != info.id && 5 != info.id || this.skill_jiansu();
+        3 == info.id ? this.skill_jiansu() : 5 == info.id && this.skill_fengshan_jiansu();
         this.GetGameObject("monsterhealth").getComponent(cc.Sprite).fillRange = Number(this.hp / this.maxhp);
         if (this.hp <= 0) {
           cc.director.emit("guaiDie", {
@@ -3557,15 +3564,31 @@ window.__require = function e(t, n, r) {
       };
       item_monster.prototype.skill_jiansu = function() {
         this.unschedule(this.skill_jiansu_scha_Call);
+        this.unschedule(this.skill_fengshan_jiansu_scha_Call);
         this.sped = this.maxsped / 2;
         this.GetGameObject("img").color = cc.color(84, 128, 255, 255);
         this.GetGameObject("bing").active = true;
+        this.GetGameObject("fengshan").active = false;
         this.scheduleOnce(this.skill_jiansu_scha_Call, 3);
       };
       item_monster.prototype.skill_jiansu_scha_Call = function() {
         this.sped = this.maxsped;
         this.GetGameObject("img").color = cc.color(255, 255, 255, 255);
         this.GetGameObject("bing").active = false;
+      };
+      item_monster.prototype.skill_fengshan_jiansu = function() {
+        this.unschedule(this.skill_jiansu_scha_Call);
+        this.unschedule(this.skill_fengshan_jiansu_scha_Call);
+        this.sped = this.maxsped / 2;
+        this.GetGameObject("img").color = cc.color(84, 128, 255, 255);
+        this.GetGameObject("fengshan").active = true;
+        this.GetGameObject("bing").active = false;
+        this.scheduleOnce(this.skill_fengshan_jiansu_scha_Call, 3);
+      };
+      item_monster.prototype.skill_fengshan_jiansu_scha_Call = function() {
+        this.sped = this.maxsped;
+        this.GetGameObject("img").color = cc.color(255, 255, 255, 255);
+        this.GetGameObject("fengshan").active = false;
       };
       item_monster = __decorate([ ccclass ], item_monster);
       return item_monster;
@@ -3630,14 +3653,14 @@ window.__require = function e(t, n, r) {
         this.enemylist = list;
         this.bullet_pre = pre;
         this.isAttack = true;
-        this.cd = 2 == id ? 1 : 2;
+        this.cd = 2 == id ? 1.5 : 2;
         Utils_1.default.setSpriteAssets(this.GetGameObject("icon").getComponent(cc.Sprite), src);
         Utils_1.default.setSpriteAssets(this.GetGameObject("upgrade").getComponent(cc.Sprite), "upgrade");
         this.level_node_size();
         this.set_level_power();
       };
       item_turret.prototype.up_cd = function() {
-        this.cd = this.cd / 2;
+        this.cd -= .6;
       };
       item_turret.prototype.level_node_size = function() {
         switch (this.level) {
@@ -3850,26 +3873,29 @@ window.__require = function e(t, n, r) {
       };
       item_turret.prototype.selectUp = function(coin) {
         if (this.level >= 3) return;
-        if (this.GetGameObject("upgrade").active) return;
-        this.GetGameObject("upgrade").stopAllActions();
-        this.GetGameObject("upgrade").y = 58;
-        cc.tween(this.GetGameObject("upgrade")).repeatForever(cc.tween().by(1, {
-          y: 15
-        }).by(1, {
-          y: -15
-        })).start();
-        if (coin >= this.price_turret()) this.GetGameObject("upgrade").active = true; else {
+        if (Number(coin) >= this.price_turret()) {
+          if (this.GetGameObject("upgrade").active) return;
+          this.GetGameObject("upgrade").active = true;
+          this.GetGameObject("upgrade").stopAllActions();
+          this.GetGameObject("upgrade").y = 58;
+          cc.tween(this.GetGameObject("upgrade")).repeatForever(cc.tween().by(1, {
+            y: 15
+          }).by(1, {
+            y: -15
+          })).start();
+        } else {
           this.GetGameObject("upgrade").active = false;
           this.GetGameObject("upgrade").stopAllActions();
         }
       };
       item_turret.prototype.onClickUpLevel = function() {
+        this.GetGameObject("upgrade").active = false;
+        var coin = this.price_turret();
         this.level++;
         this.level_node_size();
         this.set_level_power();
         this.up_cd();
-        this.GetGameObject("upgrade").active = false;
-        cc.director.emit("uplevel", this.price_turret());
+        cc.director.emit("uplevel", coin);
       };
       item_turret = __decorate([ ccclass ], item_turret);
       return item_turret;
@@ -4087,7 +4113,7 @@ window.__require = function e(t, n, r) {
             this.movePos = null;
             this.speed = 0;
           } else {
-            var v = d.normalize().mul(this.speed / 3 * dt);
+            var v = d.normalize().mul(this.speed / 2 * dt);
             this.node.position = this.node.position.add(cc.v3(v.x, v.y, 0));
           }
         }
