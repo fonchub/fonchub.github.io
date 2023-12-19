@@ -1,0 +1,27 @@
+
+clean.png
+size: 129,228
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+clean/bomb
+  rotate: false
+  xy: 1, 1
+  size: 126, 127
+  orig: 126, 127
+  offset: 0, 0
+  index: -1
+clean/fire
+  rotate: false
+  xy: 1, 130
+  size: 62, 63
+  orig: 62, 63
+  offset: 0, 0
+  index: -1
+clean/qingping
+  rotate: false
+  xy: 1, 195
+  size: 60, 31
+  orig: 60, 31
+  offset: 0, 0
+  index: -1
